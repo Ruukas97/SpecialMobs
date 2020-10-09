@@ -1,8 +1,7 @@
 package fathertoast.specialmobs;
 
-public
-class SidedModProxy
-{
-	public
-	void registerRenderers( ) {}
+public interface SidedModProxy {
+    public void registerRenderers();
+
+    public void loadMobTexture( int entityID, String[] texturePaths );
 }

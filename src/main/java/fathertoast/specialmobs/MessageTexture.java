@@ -1,8 +1,11 @@
 package fathertoast.specialmobs;
 
-import fathertoast.specialmobs.entity.*;
+import fathertoast.specialmobs.entity.ISpecialMob;
+import fathertoast.specialmobs.entity.SpecialMobData;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -85,17 +88,7 @@ class MessageTexture implements IMessage
 		public
 		IMessage onMessage( MessageTexture message, MessageContext ctx )
 		{
-			try {
-				World       world = FMLClientHandler.instance( ).getWorldClient( );
-				ISpecialMob mob   = (ISpecialMob) world.getEntityByID( message.entityId );
-				if( mob != null ) {
-					SpecialMobData data = mob.getSpecialData( );
-					data.loadTextures( message.texturePaths );
-				}
-			}
-			catch( Exception ex ) {
-				SpecialMobsMod.log( ).error( "Failed to fetch mob texture from server for Entity:{}[{}]", message.entityId, message.texturePaths, ex );
-			}
+		    SpecialMobsMod.sidedProxy.loadMobTexture( message.entityId, message.texturePaths );
 			return null;
 		}
 	}

@@ -2,6 +2,8 @@ package fathertoast.specialmobs.client;
 
 import fathertoast.specialmobs.*;
 import fathertoast.specialmobs.ai.*;
+import fathertoast.specialmobs.entity.ISpecialMob;
+import fathertoast.specialmobs.entity.SpecialMobData;
 import fathertoast.specialmobs.entity.blaze.*;
 import fathertoast.specialmobs.entity.cavespider.*;
 import fathertoast.specialmobs.entity.creeper.*;
@@ -30,10 +32,12 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public
-class ClientProxy extends SidedModProxy
+class ClientProxy implements SidedModProxy
 {
 	@Override
 	public
@@ -100,4 +104,21 @@ class ClientProxy extends SidedModProxy
 		}
 		return false;
 	}
+
+    @Override
+    public void loadMobTexture( int entityID, String[] texturePaths ) {
+        Minecraft.getMinecraft().addScheduledTask( () -> {
+            try {
+                World       world = FMLClientHandler.instance( ).getWorldClient( );
+                ISpecialMob mob   = (ISpecialMob) world.getEntityByID( entityID );
+                if( mob != null ) {
+                    SpecialMobData data = mob.getSpecialData( );
+                    data.loadTextures( texturePaths );
+                }
+            }
+            catch( Exception ex ) {
+                SpecialMobsMod.log( ).error( "Failed to fetch mob texture from server for Entity:{}[{}]", entityID, texturePaths, ex );
+            }
+        });
+    }
 }
